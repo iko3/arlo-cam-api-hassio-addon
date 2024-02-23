@@ -9,6 +9,6 @@ arch:
 ports:
   4000/tcp: 4000
   4100/tcp: 4100
-  5700/tcp: 5000
+  5000/tcp: 5700
 map:
   - config:rw
