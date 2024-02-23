@@ -1,5 +1,5 @@
 name: "Arlo Local API Server"
-version: "1.0.1"
+version: "1.0.2"
 slug: arlo-local
 description: >-
   "Local Arlo base station server"
@@ -8,5 +8,7 @@ arch:
   - i386
 ports:
   4000/tcp: 4000
+  4100/tcp: 4100
+  5700/tcp: 5000
 map:
   - config:rw
