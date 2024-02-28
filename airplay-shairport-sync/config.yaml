@@ -1,5 +1,5 @@
 name: "AirPlay Server"
-version: "1.0.0"
+version: "4.3.1"
 slug: airplay_shairport_sync
 description: >- 
   "Shairport Sync for Hass.io"
@@ -31,4 +31,4 @@ schema:
     avahi_domainname: str
     airplay_name: str
     enable_ipv6: bool
-image: mikebrady/shairport-sync:latest
+image: mikebrady/shairport-sync
