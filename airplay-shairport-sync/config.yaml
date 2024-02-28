@@ -26,9 +26,9 @@ options:
     enable_ipv6: false
 schema:
     log_level: match(^(trace|debug|info|notice|warning|error|fatal)$)
-    avahi_interfaces: str
-    avahi_hostname: str
-    avahi_domainname: str
+    avahi_interfaces: str?
+    avahi_hostname: str?
+    avahi_domainname: str?
     airplay_name: str
     enable_ipv6: bool
 image: mikebrady/shairport-sync
