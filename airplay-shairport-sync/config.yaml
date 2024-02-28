@@ -21,9 +21,9 @@ options:
     log_level: info
     avahi_interfaces:
     avahi_hostname:
-    avahi_domainname": local
-    airplay_name": Hass.io
-    enable_ipv6": false
+    avahi_domainname: local
+    airplay_name: Hass.io
+    enable_ipv6: false
 schema:
     log_level: match(^(trace|debug|info|notice|warning|error|fatal)$)
     avahi_interfaces: str
