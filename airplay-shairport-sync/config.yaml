@@ -15,6 +15,7 @@ boot: auto
 #homeassistant_api": true,
 host_network: true
 audio: true
+init: false
 map:
     - config:rw
 options:
