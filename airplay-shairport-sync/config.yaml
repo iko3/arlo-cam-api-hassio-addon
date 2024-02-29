@@ -16,6 +16,7 @@ boot: auto
 host_network: true
 audio: true
 init: false
+legacy: true
 map:
     - config:rw
 options:
