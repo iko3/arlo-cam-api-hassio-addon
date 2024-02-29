@@ -19,17 +19,7 @@ init: false
 map:
     - config:rw
 options:
-    log_level: info
-    avahi_interfaces:
-    avahi_hostname:
-    avahi_domainname: local
     airplay_name: Hass.io
-    enable_ipv6: false
 schema:
-    log_level: match(^(trace|debug|info|notice|warning|error|fatal)$)
-    avahi_interfaces: str?
-    avahi_hostname: str?
-    avahi_domainname: str?
     airplay_name: str
-    enable_ipv6: bool
 image: mikebrady/shairport-sync
