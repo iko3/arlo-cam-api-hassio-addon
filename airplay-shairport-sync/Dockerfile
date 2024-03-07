@@ -17,7 +17,7 @@ RUN apk -U add \
         libplist-dev \
         libsodium-dev \
         libgcrypt-dev \
-        libavutil-dev \
+        ffmpeg-dev \
         popt-dev \
         libressl-dev \
         soxr-dev \
