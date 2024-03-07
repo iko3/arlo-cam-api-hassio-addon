@@ -16,6 +16,7 @@ RUN apk -U add \
         libdaemon-dev \
         libplist-dev \
         libsodium-dev \
+        libgcrypt-dev \
         popt-dev \
         libressl-dev \
         soxr-dev \
