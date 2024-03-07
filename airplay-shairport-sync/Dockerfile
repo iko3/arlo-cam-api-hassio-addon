@@ -1,5 +1,4 @@
-ARG BUILD_FROM=hassioaddons/base:15.0.7
-FROM ${BUILD_FROM}
+FROM alpine:3.17 AS builder
 
 ENV LANG C.UTF-8
 
