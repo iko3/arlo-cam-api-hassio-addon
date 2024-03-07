@@ -9,7 +9,6 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN apk -U add \
         git \
         build-base \
-        build-essential \
         autoconf \
         automake \
         libtool \
