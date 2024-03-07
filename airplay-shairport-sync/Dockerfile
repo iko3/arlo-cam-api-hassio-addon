@@ -9,6 +9,7 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN apk -U add \
         git \
         build-base \
+        build-essential \
         autoconf \
         automake \
         libtool \
@@ -18,8 +19,19 @@ RUN apk -U add \
         libressl-dev \
         soxr-dev \
         avahi-dev \
-        libconfig-dev \
- && cd /root \
+        libconfig-dev
+
+ ##### ALAC #####
+ RUN git clone https://github.com/mikebrady/alac
+ WORKDIR /alac
+ RUN autoreconf -i
+ RUN ./configure
+ RUN make
+ RUN make install
+ WORKDIR /
+ ##### ALAC END #####
+
+ RUN cd /root \
  && git clone https://github.com/mikebrady/shairport-sync.git \
  && cd shairport-sync \
  && autoreconf -i -f \
