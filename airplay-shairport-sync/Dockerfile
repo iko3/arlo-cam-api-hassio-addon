@@ -1,37 +1,84 @@
-FROM debian:buster
+ARG BUILD_FROM=hassioaddons/base:15.0.7
+FROM ${BUILD_FROM}
 
-RUN apt-get update -yy && \
-    apt-get install -yy \
-        pkg-config \ 
-        avahi-daemon \
-        avahi-discover \
-        avahi-utils \
-        libnss-mdns \
-        dnsutils \
-        python3 \
-        python3-pip \
-        python3-pyaudio \
-        libffi-dev \
-        alsa-utils \
-	libavformat-dev \
-	libavcodec-dev \
-	libavdevice-dev \
-	libavutil-dev \
-	libavfilter-dev \
-	libswscale-dev \
-	libswresample-dev \
-	&& rm -rf /var/lib/apt/lists/*
+ENV LANG C.UTF-8
 
-COPY requirements.txt /airplay2/requirements.txt
+# Set shell
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
-RUN pip3 install -r /airplay2/requirements.txt --no-cache-dir
+RUN apk -U add \
+        git \
+        build-base \
+        autoconf \
+        automake \
+        libtool \
+        alsa-lib-dev \
+        libdaemon-dev \
+        popt-dev \
+        libressl-dev \
+        soxr-dev \
+        avahi-dev \
+        libconfig-dev \
+ && cd /root \
+ && git clone https://github.com/mikebrady/shairport-sync.git \
+ && cd shairport-sync \
+ && autoreconf -i -f \
+ && ./configure \
+        --with-alsa \
+        --with-pipe \
+        --with-avahi \
+        --with-ssl=openssl \
+        --with-soxr \
+        --with-metadata \
+        --with-airplay-2 \
+        --with-mqtt-client \
+        --with-apple-alac \
+ && make \
+ && make install \
+ && cd / \
+ && apk --purge del \
+        git \
+        build-base \
+        autoconf \
+        automake \
+        libtool \
+        alsa-lib-dev \
+        libdaemon-dev \
+        popt-dev \
+        libressl-dev \
+        soxr-dev \
+        avahi-dev \
+        libconfig-dev \
+ && apk add \
+        dbus \
+        alsa-lib \
+        alsa-plugins-pulse \
+        libdaemon \
+        popt \
+        libressl \
+        soxr \
+        avahi \
+        libconfig \
+ && rm -rf \
+        /etc/ssl \
+        /var/cache/apk/* \
+        /lib/apk/db/* \
+        /root/shairport-sync
 
-COPY ap2-receiver.py /airplay2/ap2-receiver.py
-COPY ap2 /airplay2/ap2
+# Copy root filesystem
+COPY rootfs /
 
-COPY docker/avahi-daemon.conf /etc/avahi/avahi-daemon.conf
-COPY docker/start.sh /
+# Build arguments
+ARG BUILD_ARCH
+ARG BUILD_DATE
+ARG BUILD_REF
+ARG BUILD_VERSION
 
-RUN chmod +x /start.sh
-
-CMD ["/start.sh"]
+# Labels
+LABEL \
+    io.hass.name="Shairport Sync" \
+    io.hass.description="Shairport Sync for Hass.io" \
+    io.hass.arch="${BUILD_ARCH}" \
+    io.hass.type="addon" \
+    io.hass.version=${BUILD_VERSION} \
+    maintainer="Oleg Andrushko <oleg@andrushko.net>"
