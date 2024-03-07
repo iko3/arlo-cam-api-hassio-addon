@@ -18,6 +18,7 @@ RUN apk -U add \
         libressl-dev \
         soxr-dev \
         avahi-dev \
+        mosquitto-dev \
         libconfig-dev
 
  ##### ALAC #####
