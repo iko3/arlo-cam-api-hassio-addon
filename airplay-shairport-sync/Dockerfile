@@ -3,7 +3,7 @@ FROM alpine:3.17 AS builder
 ENV LANG C.UTF-8
 
 # Set shell
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+#SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 RUN apk -U add \
         git \
