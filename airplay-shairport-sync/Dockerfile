@@ -32,7 +32,6 @@ RUN apk -U add \
         --with-soxr \
         --with-metadata \
         --with-mqtt-client \
-        --with
  && make \
  && make install \
  && cd / \
