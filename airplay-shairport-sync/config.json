@@ -3,6 +3,7 @@
     "version": "1.0.0",
     "slug": "airplay_shairport_sync",
     "description": "Shairport Sync for Hass.io",
+    "init": false,
     "url": "https://github.com/iko3/hassio-addons/tree/main/airplay-shairport-sync",
     "startup": "application",
     "arch": [
