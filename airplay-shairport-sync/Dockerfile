@@ -97,4 +97,4 @@ RUN 	adduser -D shairport-sync -G shairport-sync
 RUN 	addgroup -g 29 docker_audio && addgroup shairport-sync docker_audio
 COPY 	start.sh /
 
-ENTRYPOINT [ "./start.sh" ]
+#ENTRYPOINT [ "./start.sh" ]
