@@ -42,5 +42,5 @@
   "environment": {
     "LOG_FORMAT": "{LEVEL}: {MESSAGE}"
   },
-  "image": "mikebrady/shairport-sync:latest"
+  "image": "mikebrady/shairport-sync"
 }
