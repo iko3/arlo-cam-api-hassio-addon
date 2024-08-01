@@ -55,7 +55,7 @@ WORKDIR /
 WORKDIR /shairport-sync
 RUN git clone https://github.com/mikebrady/shairport-sync
 COPY . .
-RUN git checkout "$SHAIRPORT_SYNC_BRANCH"
+#RUN git checkout "$SHAIRPORT_SYNC_BRANCH"
 WORKDIR /shairport-sync/build
 RUN autoreconf -i ../
 RUN CFLAGS="-O3" CXXFLAGS="-O3" ../configure --sysconfdir=/etc --with-alsa --with-pa --with-soxr --with-avahi --with-ssl=openssl \
