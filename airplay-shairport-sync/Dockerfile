@@ -4,10 +4,10 @@ FROM ${BUILD_FROM} AS builder
 
 # Check required arguments exist. These will be provided by the Github Action
 # Workflow and are required to ensure the correct branches are being used.
-ARG SHAIRPORT_SYNC_BRANCH=master
-RUN test -n "$SHAIRPORT_SYNC_BRANCH"
-ARG NQPTP_BRANCH=master
-RUN test -n "$NQPTP_BRANCH"
+#ARG SHAIRPORT_SYNC_BRANCH=master
+#RUN test -n "$SHAIRPORT_SYNC_BRANCH"
+#ARG NQPTP_BRANCH=master
+#RUN test -n "$NQPTP_BRANCH"
 
 RUN apk -U add \
         alsa-lib-dev \
@@ -44,7 +44,7 @@ WORKDIR /
 ##### NQPTP #####
 RUN git clone https://github.com/mikebrady/nqptp
 WORKDIR /nqptp
-RUN git checkout "$NQPTP_BRANCH"
+#RUN git clone "$NQPTP_BRANCH"
 RUN autoreconf -i
 RUN ./configure
 RUN make
@@ -53,6 +53,7 @@ WORKDIR /
 
 ##### SPS #####
 WORKDIR /shairport-sync
+RUN git clone https://github.com/mikebrady/shairport-sync
 COPY . .
 RUN git checkout "$SHAIRPORT_SYNC_BRANCH"
 WORKDIR /shairport-sync/build
