@@ -1,0 +1,10 @@
+#!/usr/bin/with-contenv bashio
+# ==============================================================================
+# Community Hass.io Add-ons: Homebridge
+# Starts the D-Bus daemon
+# ==============================================================================
+# shellcheck disable=SC1091
+
+
+exec dbus-daemon --system --nofork \
+  || bashio::exit.nok 'Failed to start D-Bus daemon'

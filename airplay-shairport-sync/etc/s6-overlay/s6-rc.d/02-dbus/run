@@ -1,3 +1,0 @@
-#!/command/with-contenv sh
-echo "Starting dbus"
-exec s6-notifyoncheck  dbus-daemon --system --nofork --nopidfile
