@@ -2,10 +2,10 @@ FROM alpine:3.17 AS builder
 
 # Check required arguments exist. These will be provided by the Github Action
 # Workflow and are required to ensure the correct branches are being used.
-ARG SHAIRPORT_SYNC_BRANCH
-RUN test -n "$SHAIRPORT_SYNC_BRANCH"
-ARG NQPTP_BRANCH
-RUN test -n "$NQPTP_BRANCH"
+#ARG SHAIRPORT_SYNC_BRANCH
+#RUN test -n "$SHAIRPORT_SYNC_BRANCH"
+#ARG NQPTP_BRANCH
+#RUN test -n "$NQPTP_BRANCH"
 
 RUN apk -U add \
         alsa-lib-dev \
@@ -42,7 +42,7 @@ WORKDIR /
 ##### NQPTP #####
 RUN git clone https://github.com/mikebrady/nqptp
 WORKDIR /nqptp
-RUN git checkout "$NQPTP_BRANCH"
+#RUN git checkout "$NQPTP_BRANCH"
 RUN autoreconf -i
 RUN ./configure
 RUN make
@@ -52,7 +52,7 @@ WORKDIR /
 ##### SPS #####
 WORKDIR /shairport-sync
 COPY . .
-RUN git checkout "$SHAIRPORT_SYNC_BRANCH"
+#RUN git checkout "$SHAIRPORT_SYNC_BRANCH"
 WORKDIR /shairport-sync/build
 RUN autoreconf -i ../
 RUN CFLAGS="-O3" CXXFLAGS="-O3" ../configure --sysconfdir=/etc --with-alsa --with-pa --with-soxr --with-avahi --with-ssl=openssl \
