@@ -1,6 +1,7 @@
 ARG BUILD_FROM=ghcr.io/hassio-addons/base:16.2.0
 # hadolint ignore=DL3006
-FROM ${BUILD_FROM} AS builder
+#FROM ${BUILD_FROM} AS builder
+FROM alpine:3.17 AS builder
 
 # Check required arguments exist. These will be provided by the Github Action
 # Workflow and are required to ensure the correct branches are being used.
