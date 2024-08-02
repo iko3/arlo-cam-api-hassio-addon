@@ -1,4 +1,4 @@
-ARG BUILD_FROM=ghcr.io/hassio-addons/debian-base:7.4.0
+ARG BUILD_FROM=ghcr.io/hassio-addons/base:16.2.0
 # hadolint ignore=DL3006
 FROM ${BUILD_FROM} AS builder
 
@@ -10,6 +10,7 @@ FROM ${BUILD_FROM} AS builder
 #RUN test -n "$NQPTP_BRANCH"
 
 RUN apk -U add \
+        pkgconf \
         alsa-lib-dev \
         autoconf \
         automake \
@@ -52,19 +53,17 @@ WORKDIR /
 ##### NQPTP END #####
 
 ##### SPS #####
-#WORKDIR /shairport-sync
-RUN git clone https://github.com/mikebrady/shairport-sync.git \
-&& cd shairport-sync \
-&& autoreconf -i -f \
-&& ./configure \
-       --with-alsa \
-       --with-pipe \
-       --with-avahi \
-       --with-ssl=openssl \
-       --with-soxr \
-       --with-metadata \
-&& make \
-&& make install 
+WORKDIR /shairport-sync
+COPY . .
+RUN git clone https://github.com/mikebrady/shairport-sync
+WORKDIR /shairport-sync/build
+RUN autoreconf -i ../shairport-sync
+RUN CFLAGS="-O3" CXXFLAGS="-O3" ../shairport-sync/configure --sysconfdir=/etc --with-alsa --with-pa --with-soxr --with-avahi --with-ssl=openssl \
+        --with-airplay-2 --with-metadata --with-dummy --with-pipe --with-dbus-interface \
+        --with-stdout --with-mpris-interface --with-mqtt-client \
+        --with-apple-alac --with-convolution
+RUN make -j $(nproc)
+RUN DESTDIR=install make install
 WORKDIR /
 ##### SPS END #####
 
@@ -98,33 +97,34 @@ RUN apk -U add \
         soxr
 
 # Copy build files.
-#COPY --from=builder /root/shairport-sync/build/install/usr/local/bin/shairport-sync /usr/local/bin/shairport-sync
-#COPY --from=builder /root/shairport-sync/build/install/usr/local/share/man/man1 /usr/share/man/man1
+COPY --from=builder /shairport-sync/build/install/usr/local/bin/shairport-sync /usr/local/bin/shairport-sync
+COPY --from=builder /shairport-sync/build/install/usr/local/share/man/man1 /usr/share/man/man1
 COPY --from=builder /nqptp/nqptp /usr/local/bin/nqptp
 COPY --from=builder /usr/local/lib/libalac.* /usr/local/lib/
-#COPY --from=builder /root/shairport-sync/build/install/etc/shairport-sync.conf /etc/
-#COPY --from=builder /root/shairport-sync/build/install/etc/shairport-sync.conf.sample /etc/
-#COPY --from=builder /root/shairport-sync/build/install/etc/dbus-1/system.d/shairport-sync-dbus.conf /etc/dbus-1/system.d/
-#COPY --from=builder /root/shairport-sync/build/install/etc/dbus-1/system.d/shairport-sync-mpris.conf /etc/dbus-1/system.d/
+COPY --from=builder /shairport-sync/build/install/etc/shairport-sync.conf /etc/
+COPY --from=builder /shairport-sync/build/install/etc/shairport-sync.conf.sample /etc/
+COPY --from=builder /shairport-sync/build/install/etc/dbus-1/system.d/shairport-sync-dbus.conf /etc/dbus-1/system.d/
+COPY --from=builder /shairport-sync/build/install/etc/dbus-1/system.d/shairport-sync-mpris.conf /etc/dbus-1/system.d/
 
-#COPY /shairport-sync/docker/etc/s6-overlay/s6-rc.d /etc/s6-overlay/s6-rc.d
-#COPY /shairport-sync/docker/etc/pulse /etc/pulse
-#RUN chmod +x /etc/s6-overlay/s6-rc.d/01-startup/script.sh
+
+COPY --from=builder /shairport-sync/shairport-sync/docker/etc/s6-overlay/s6-rc.d /etc/s6-overlay/s6-rc.d
+COPY --from=builder /shairport-sync/shairport-sync/docker/etc/pulse /etc/pulse
+RUN chmod +x /etc/s6-overlay/s6-rc.d/01-startup/script.sh
 
 # Create non-root user for running the container -- running as the user 'shairport-sync' also allows
 # Shairport Sync to provide the D-Bus and MPRIS interfaces within the container
 
-#RUN addgroup shairport-sync
-#RUN adduser -D shairport-sync -G shairport-sync
+RUN addgroup shairport-sync
+RUN adduser -D shairport-sync -G shairport-sync
 
 # Add the shairport-sync user to the pre-existing audio group, which has ID 29, for access to the ALSA stuff
-#RUN addgroup -g 29 docker_audio && addgroup shairport-sync docker_audio && addgroup shairport-sync audio
+RUN addgroup -g 29 docker_audio && addgroup shairport-sync docker_audio && addgroup shairport-sync audio
 
 # Remove anything we don't need.
-#RUN rm -rf /lib/apk/db/*
+RUN rm -rf /lib/apk/db/*
 
 # Add run script that will start SPS
-#COPY /root/shairport-sync/docker/run.sh /run.sh
-#RUN chmod +x /run.sh
+COPY --from=builder /shairport-sync/shairport-sync/docker/run.sh ./run.sh
+RUN chmod +x /run.sh
 
-#Entrypoint ["/init","./run.sh"]
+ENTRYPOINT ["/init","./run.sh"]
