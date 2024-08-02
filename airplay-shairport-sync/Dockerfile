@@ -108,8 +108,8 @@ COPY --from=builder /usr/local/lib/libalac.* /usr/local/lib/
 #COPY --from=builder /root/shairport-sync/build/install/etc/dbus-1/system.d/shairport-sync-dbus.conf /etc/dbus-1/system.d/
 #COPY --from=builder /root/shairport-sync/build/install/etc/dbus-1/system.d/shairport-sync-mpris.conf /etc/dbus-1/system.d/
 
-COPY ./docker/etc/s6-overlay/s6-rc.d /etc/s6-overlay/s6-rc.d
-COPY ./docker/etc/pulse /etc/pulse
+COPY /root/shairport-sync/docker/etc/s6-overlay/s6-rc.d /etc/s6-overlay/s6-rc.d
+COPY /root/shairport-sync/docker/etc/pulse /etc/pulse
 RUN chmod +x /etc/s6-overlay/s6-rc.d/01-startup/script.sh
 
 # Create non-root user for running the container -- running as the user 'shairport-sync' also allows
@@ -125,7 +125,7 @@ RUN addgroup -g 29 docker_audio && addgroup shairport-sync docker_audio && addgr
 RUN rm -rf /lib/apk/db/*
 
 # Add run script that will start SPS
-COPY ./docker/run.sh ./run.sh
+COPY /root/shairport-sync/docker/run.sh /run.sh
 RUN chmod +x /run.sh
 
 Entrypoint ["/init","./run.sh"]
