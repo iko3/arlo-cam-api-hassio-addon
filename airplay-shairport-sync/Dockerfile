@@ -52,19 +52,19 @@ WORKDIR /
 ##### NQPTP END #####
 
 ##### SPS #####
-WORKDIR /shairport-sync
-RUN git clone https://github.com/mikebrady/shairport-sync
-COPY . .
-#RUN git checkout "$SHAIRPORT_SYNC_BRANCH"
-WORKDIR /shairport-sync/build
-RUN autoreconf -i ../
-RUN CFLAGS="-O3" CXXFLAGS="-O3" ../configure --sysconfdir=/etc --with-alsa --with-pa --with-soxr --with-avahi --with-ssl=openssl \
-        --with-airplay-2 --with-metadata --with-dummy --with-pipe --with-dbus-interface \
-        --with-stdout --with-mpris-interface --with-mqtt-client \
-        --with-apple-alac --with-convolution
-RUN make -j $(nproc)
-RUN DESTDIR=install make install
-WORKDIR /
+RUN cd /root \
+&& git clone https://github.com/mikebrady/shairport-sync.git \
+&& cd shairport-sync \
+&& autoreconf -i -f \
+&& ./configure \
+       --with-alsa \
+       --with-pipe \
+       --with-avahi \
+       --with-ssl=openssl \
+       --with-soxr \
+       --with-metadata \
+&& make \
+&& make install 
 ##### SPS END #####
 
 # Shairport Sync Runtime System
