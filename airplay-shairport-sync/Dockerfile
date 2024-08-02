@@ -107,24 +107,24 @@ COPY --from=builder /usr/local/lib/libalac.* /usr/local/lib/
 #COPY --from=builder /root/shairport-sync/build/install/etc/dbus-1/system.d/shairport-sync-dbus.conf /etc/dbus-1/system.d/
 #COPY --from=builder /root/shairport-sync/build/install/etc/dbus-1/system.d/shairport-sync-mpris.conf /etc/dbus-1/system.d/
 
-COPY /shairport-sync/docker/etc/s6-overlay/s6-rc.d /etc/s6-overlay/s6-rc.d
-COPY /shairport-sync/docker/etc/pulse /etc/pulse
-RUN chmod +x /etc/s6-overlay/s6-rc.d/01-startup/script.sh
+#COPY /shairport-sync/docker/etc/s6-overlay/s6-rc.d /etc/s6-overlay/s6-rc.d
+#COPY /shairport-sync/docker/etc/pulse /etc/pulse
+#RUN chmod +x /etc/s6-overlay/s6-rc.d/01-startup/script.sh
 
 # Create non-root user for running the container -- running as the user 'shairport-sync' also allows
 # Shairport Sync to provide the D-Bus and MPRIS interfaces within the container
 
-RUN addgroup shairport-sync
-RUN adduser -D shairport-sync -G shairport-sync
+#RUN addgroup shairport-sync
+#RUN adduser -D shairport-sync -G shairport-sync
 
 # Add the shairport-sync user to the pre-existing audio group, which has ID 29, for access to the ALSA stuff
-RUN addgroup -g 29 docker_audio && addgroup shairport-sync docker_audio && addgroup shairport-sync audio
+#RUN addgroup -g 29 docker_audio && addgroup shairport-sync docker_audio && addgroup shairport-sync audio
 
 # Remove anything we don't need.
-RUN rm -rf /lib/apk/db/*
+#RUN rm -rf /lib/apk/db/*
 
 # Add run script that will start SPS
-COPY /root/shairport-sync/docker/run.sh /run.sh
-RUN chmod +x /run.sh
+#COPY /root/shairport-sync/docker/run.sh /run.sh
+#RUN chmod +x /run.sh
 
-Entrypoint ["/init","./run.sh"]
+#Entrypoint ["/init","./run.sh"]
