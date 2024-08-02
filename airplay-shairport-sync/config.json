@@ -23,6 +23,7 @@
   "map": [
     "config:rw"
   ],
+  "devices": ["/dev/log"],
   "options": {
     "log_level": "info",
     "avahi_interfaces": "",
