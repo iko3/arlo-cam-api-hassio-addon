@@ -124,8 +124,26 @@ RUN addgroup -g 29 docker_audio && addgroup shairport-sync docker_audio && addgr
 # Remove anything we don't need.
 RUN rm -rf /lib/apk/db/*
 
+
+# Build arguments
+ARG BUILD_ARCH
+ARG BUILD_DATE
+ARG BUILD_REF
+ARG BUILD_VERSION
+
+# Labels
+LABEL \
+    io.hass.name="Shairport Sync" \
+    io.hass.description="Shairport Sync for Hass.io" \
+    io.hass.arch="${BUILD_ARCH}" \
+    io.hass.type="addon" \
+    io.hass.version=${BUILD_VERSION} \
+    maintainer="Oleg A <oleg@andrushko.net>"
+
+
 # Add run script that will start SPS
 COPY --from=builder /shairport-sync/shairport-sync/docker/run.sh ./run.sh
 RUN chmod +x /run.sh
 
 ENTRYPOINT ["/init","./run.sh"]
+
