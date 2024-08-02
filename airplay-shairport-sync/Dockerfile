@@ -52,9 +52,8 @@ WORKDIR /
 ##### NQPTP END #####
 
 ##### SPS #####
-WORKDIR /shairport-sync
-RUN cd /root \
-&& git clone https://github.com/mikebrady/shairport-sync.git \
+#WORKDIR /shairport-sync
+RUN git clone https://github.com/mikebrady/shairport-sync.git \
 && cd shairport-sync \
 && autoreconf -i -f \
 && ./configure \
@@ -108,8 +107,8 @@ COPY --from=builder /usr/local/lib/libalac.* /usr/local/lib/
 #COPY --from=builder /root/shairport-sync/build/install/etc/dbus-1/system.d/shairport-sync-dbus.conf /etc/dbus-1/system.d/
 #COPY --from=builder /root/shairport-sync/build/install/etc/dbus-1/system.d/shairport-sync-mpris.conf /etc/dbus-1/system.d/
 
-COPY /root/shairport-sync/docker/etc/s6-overlay/s6-rc.d /etc/s6-overlay/s6-rc.d
-COPY /root/shairport-sync/docker/etc/pulse /etc/pulse
+COPY /shairport-sync/docker/etc/s6-overlay/s6-rc.d /etc/s6-overlay/s6-rc.d
+COPY /shairport-sync/docker/etc/pulse /etc/pulse
 RUN chmod +x /etc/s6-overlay/s6-rc.d/01-startup/script.sh
 
 # Create non-root user for running the container -- running as the user 'shairport-sync' also allows
