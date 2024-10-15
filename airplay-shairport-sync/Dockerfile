@@ -50,8 +50,8 @@ WORKDIR /
 ##### SPS #####
 RUN git clone https://github.com/mikebrady/shairport-sync.git
 WORKDIR /shairport-sync
-RUN autoreconf -i ../
-RUN CFLAGS="-O3" CXXFLAGS="-O3" ../configure --sysconfdir=/etc --with-alsa --with-pa --with-soxr --with-avahi --with-ssl=openssl \
+RUN autoreconf -i
+RUN CFLAGS="-O3" CXXFLAGS="-O3" ./configure --sysconfdir=/etc --with-alsa --with-pa --with-soxr --with-avahi --with-ssl=openssl \
         --with-airplay-2 --with-metadata --with-dummy --with-pipe --with-dbus-interface \
         --with-stdout --with-mpris-interface --with-mqtt-client \
         --with-apple-alac --with-convolution
