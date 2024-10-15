@@ -1,17 +1,11 @@
-ARG BUILD_FROM=ghcr.io/hassio-addons/base:16.2.0
-# hadolint ignore=DL3006
-#FROM ${BUILD_FROM} AS builder
 FROM alpine:3.17 AS builder
 
 # Check required arguments exist. These will be provided by the Github Action
 # Workflow and are required to ensure the correct branches are being used.
-#ARG SHAIRPORT_SYNC_BRANCH=master
-#RUN test -n "$SHAIRPORT_SYNC_BRANCH"
-#ARG NQPTP_BRANCH=master
-#RUN test -n "$NQPTP_BRANCH"
+ARG SHAIRPORT_SYNC_BRANCH=master
+ARG NQPTP_BRANCH=main
 
 RUN apk -U add \
-        pkgconf \
         alsa-lib-dev \
         autoconf \
         automake \
@@ -46,7 +40,7 @@ WORKDIR /
 ##### NQPTP #####
 RUN git clone https://github.com/mikebrady/nqptp
 WORKDIR /nqptp
-#RUN git clone "$NQPTP_BRANCH"
+RUN git checkout "$NQPTP_BRANCH"
 RUN autoreconf -i
 RUN ./configure
 RUN make
@@ -56,10 +50,10 @@ WORKDIR /
 ##### SPS #####
 WORKDIR /shairport-sync
 COPY . .
-RUN git clone https://github.com/mikebrady/shairport-sync
+RUN git checkout "$SHAIRPORT_SYNC_BRANCH"
 WORKDIR /shairport-sync/build
-RUN autoreconf -i ../shairport-sync
-RUN CFLAGS="-O3" CXXFLAGS="-O3" ../shairport-sync/configure --sysconfdir=/etc --with-alsa --with-pa --with-soxr --with-avahi --with-ssl=openssl \
+RUN autoreconf -i ../
+RUN CFLAGS="-O3" CXXFLAGS="-O3" ../configure --sysconfdir=/etc --with-alsa --with-pa --with-soxr --with-avahi --with-ssl=openssl \
         --with-airplay-2 --with-metadata --with-dummy --with-pipe --with-dbus-interface \
         --with-stdout --with-mpris-interface --with-mqtt-client \
         --with-apple-alac --with-convolution
@@ -107,9 +101,8 @@ COPY --from=builder /shairport-sync/build/install/etc/shairport-sync.conf.sample
 COPY --from=builder /shairport-sync/build/install/etc/dbus-1/system.d/shairport-sync-dbus.conf /etc/dbus-1/system.d/
 COPY --from=builder /shairport-sync/build/install/etc/dbus-1/system.d/shairport-sync-mpris.conf /etc/dbus-1/system.d/
 
-
-COPY --from=builder /shairport-sync/shairport-sync/docker/etc/s6-overlay/s6-rc.d /etc/s6-overlay/s6-rc.d
-COPY --from=builder /shairport-sync/shairport-sync/docker/etc/pulse /etc/pulse
+COPY ./docker/etc/s6-overlay/s6-rc.d /etc/s6-overlay/s6-rc.d
+COPY ./docker/etc/pulse /etc/pulse
 RUN chmod +x /etc/s6-overlay/s6-rc.d/01-startup/script.sh
 
 # Create non-root user for running the container -- running as the user 'shairport-sync' also allows
@@ -124,26 +117,8 @@ RUN addgroup -g 29 docker_audio && addgroup shairport-sync docker_audio && addgr
 # Remove anything we don't need.
 RUN rm -rf /lib/apk/db/*
 
-
-# Build arguments
-ARG BUILD_ARCH
-ARG BUILD_DATE
-ARG BUILD_REF
-ARG BUILD_VERSION
-
-# Labels
-LABEL \
-    io.hass.name="Shairport Sync" \
-    io.hass.description="Shairport Sync for Hass.io" \
-    io.hass.arch="${BUILD_ARCH}" \
-    io.hass.type="addon" \
-    io.hass.version=${BUILD_VERSION} \
-    maintainer="Oleg A <oleg@andrushko.net>"
-
-
 # Add run script that will start SPS
-COPY --from=builder /shairport-sync/shairport-sync/docker/run.sh ./run.sh
+COPY ./docker/run.sh ./run.sh
 RUN chmod +x /run.sh
 
-ENTRYPOINT ["/init","./run.sh"]
-
+Entrypoint ["/init","./run.sh"]
